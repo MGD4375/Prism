@@ -1,0 +1,7 @@
+C:\git\Prism\publish\cerulean\Prism.Cerulean.Web.exe
+C:\git\Prism\publish\cerulean\appsettings.Development.json
+C:\git\Prism\publish\cerulean\appsettings.json
+C:\git\Prism\publish\cerulean\Prism.Cerulean.Web.dll
+C:\git\Prism\publish\cerulean\Prism.Cerulean.Web.deps.json
+C:\git\Prism\publish\cerulean\Prism.Cerulean.Web.runtimeconfig.json
+C:\git\Prism\publish\cerulean\Prism.Cerulean.Web.pdb

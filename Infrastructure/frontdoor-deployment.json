@@ -1,0 +1,179 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "_generator": {
+      "name": "bicep",
+      "version": "0.16.2.56959",
+      "templateHash": "3062867517604856229"
+    }
+  },
+  "parameters": {
+    "frontDoorName": {
+      "type": "string",
+      "metadata": {
+        "description": "The name of the frontdoor resource."
+      }
+    },
+    "ceruleanBackendAddress": {
+      "type": "string",
+      "metadata": {
+        "description": "The hostname of the Cerulean backend. Must be an IP address or FQDN."
+      }
+    },
+    "vermillionBackendAddress": {
+      "type": "string",
+      "metadata": {
+        "description": "The hostname of the Vermillion backend. Must be an IP address or FQDN."
+      }
+    }
+  },
+  "variables": {
+    "frontEndEndpointName": "frontEndEndpoint",
+    "loadBalancingSettingsName": "loadBalancingSettings",
+    "healthProbeSettingsName": "healthProbeSettings",
+    "ceruleanRoutingRuleName": "ceruleanRoutingRule",
+    "vermillionRoutingRuleName": "vermillionRoutingRule",
+    "ceruleanBackendPoolName": "ceruleanBackendPool",
+    "vermillionBackendPoolName": "vermillionBackendPool"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Network/frontDoors",
+      "apiVersion": "2020-05-01",
+      "name": "[parameters('frontDoorName')]",
+      "location": "global",
+      "properties": {
+        "enabledState": "Enabled",
+        "frontendEndpoints": [
+          {
+            "name": "[variables('frontEndEndpointName')]",
+            "properties": {
+              "hostName": "[format('{0}.azurefd.net', parameters('frontDoorName'))]",
+              "sessionAffinityEnabledState": "Disabled"
+            }
+          }
+        ],
+        "loadBalancingSettings": [
+          {
+            "name": "[variables('loadBalancingSettingsName')]",
+            "properties": {
+              "sampleSize": 4,
+              "successfulSamplesRequired": 2
+            }
+          }
+        ],
+        "healthProbeSettings": [
+          {
+            "name": "[variables('healthProbeSettingsName')]",
+            "properties": {
+              "path": "/",
+              "protocol": "Http",
+              "intervalInSeconds": 120
+            }
+          }
+        ],
+        "backendPools": [
+          {
+            "name": "[variables('ceruleanBackendPoolName')]",
+            "properties": {
+              "backends": [
+                {
+                  "address": "[parameters('ceruleanBackendAddress')]",
+                  "backendHostHeader": "[parameters('ceruleanBackendAddress')]",
+                  "httpPort": 80,
+                  "httpsPort": 443,
+                  "weight": 50,
+                  "priority": 1,
+                  "enabledState": "Enabled"
+                }
+              ],
+              "loadBalancingSettings": {
+                "id": "[resourceId('Microsoft.Network/frontDoors/loadBalancingSettings', parameters('frontDoorName'), variables('loadBalancingSettingsName'))]"
+              },
+              "healthProbeSettings": {
+                "id": "[resourceId('Microsoft.Network/frontDoors/healthProbeSettings', parameters('frontDoorName'), variables('healthProbeSettingsName'))]"
+              }
+            }
+          },
+          {
+            "name": "[variables('vermillionBackendPoolName')]",
+            "properties": {
+              "backends": [
+                {
+                  "address": "[parameters('vermillionBackendAddress')]",
+                  "backendHostHeader": "[parameters('vermillionBackendAddress')]",
+                  "httpPort": 80,
+                  "httpsPort": 443,
+                  "weight": 50,
+                  "priority": 1,
+                  "enabledState": "Enabled"
+                }
+              ],
+              "loadBalancingSettings": {
+                "id": "[resourceId('Microsoft.Network/frontDoors/loadBalancingSettings', parameters('frontDoorName'), variables('loadBalancingSettingsName'))]"
+              },
+              "healthProbeSettings": {
+                "id": "[resourceId('Microsoft.Network/frontDoors/healthProbeSettings', parameters('frontDoorName'), variables('healthProbeSettingsName'))]"
+              }
+            }
+          }
+        ],
+        "routingRules": [
+          {
+            "name": "[variables('ceruleanRoutingRuleName')]",
+            "properties": {
+              "frontendEndpoints": [
+                {
+                  "id": "[resourceId('Microsoft.Network/frontDoors/frontEndEndpoints', parameters('frontDoorName'), variables('frontEndEndpointName'))]"
+                }
+              ],
+              "acceptedProtocols": [
+                "Http",
+                "Https"
+              ],
+              "patternsToMatch": [
+                "/cerulean",
+                "/cerulean/*"
+              ],
+              "routeConfiguration": {
+                "@odata.type": "#Microsoft.Azure.FrontDoor.Models.FrontdoorForwardingConfiguration",
+                "forwardingProtocol": "MatchRequest",
+                "backendPool": {
+                  "id": "[resourceId('Microsoft.Network/frontDoors/backEndPools', parameters('frontDoorName'), variables('ceruleanBackendPoolName'))]"
+                }
+              },
+              "enabledState": "Enabled"
+            }
+          },
+          {
+            "name": "[variables('vermillionRoutingRuleName')]",
+            "properties": {
+              "frontendEndpoints": [
+                {
+                  "id": "[resourceId('Microsoft.Network/frontDoors/frontEndEndpoints', parameters('frontDoorName'), variables('frontEndEndpointName'))]"
+                }
+              ],
+              "acceptedProtocols": [
+                "Http",
+                "Https"
+              ],
+              "patternsToMatch": [
+                "/vermillion",
+                "/vermillion/*"
+              ],
+              "routeConfiguration": {
+                "@odata.type": "#Microsoft.Azure.FrontDoor.Models.FrontdoorForwardingConfiguration",
+                "forwardingProtocol": "MatchRequest",
+                "backendPool": {
+                  "id": "[resourceId('Microsoft.Network/frontDoors/backEndPools', parameters('frontDoorName'), variables('vermillionBackendPoolName'))]"
+                }
+              },
+              "enabledState": "Enabled"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

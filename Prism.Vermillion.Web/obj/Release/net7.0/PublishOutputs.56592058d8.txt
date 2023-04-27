@@ -1,0 +1,7 @@
+C:\git\Prism\publish\vermillion\Prism.Vermillion.Web.exe
+C:\git\Prism\publish\vermillion\appsettings.Development.json
+C:\git\Prism\publish\vermillion\appsettings.json
+C:\git\Prism\publish\vermillion\Prism.Vermillion.Web.dll
+C:\git\Prism\publish\vermillion\Prism.Vermillion.Web.deps.json
+C:\git\Prism\publish\vermillion\Prism.Vermillion.Web.runtimeconfig.json
+C:\git\Prism\publish\vermillion\Prism.Vermillion.Web.pdb
