@@ -10,6 +10,4 @@ https://prism.com/cerulean -> Cerulean.Web
 
 https://prism.com/vermillion -> Vermillion.Web
 
----
-
-I was successful insofar as those routes work. Where it fell down is that cerulean did a load of it's routing on the basis of '/' being the base url. Because requests to '/' were routing back to prism, scripts and styles failed to be delivered.
+This can potentially enable us to migrate from cerulean to vermillion over time, replacing one route at a time where we want a like-for-like replacement, and adding new ones where we don't.

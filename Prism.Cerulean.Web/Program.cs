@@ -1,5 +1,3 @@
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
 using Prism.Cerulean.Web.Data;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,7 +7,10 @@ builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddSingleton<WeatherForecastService>();
 
+
 var app = builder.Build();
+
+app.UsePathBase("/cerulean");
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
